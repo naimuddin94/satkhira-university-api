@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const userValidationSchema = z.object({
-  id: z.string().optional(),
+  id: z.number().optional(),
   email: z
     .string({ required_error: 'Email is required' })
     .email({ message: 'Please enter a valid email address' }),
