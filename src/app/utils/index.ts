@@ -1,4 +1,6 @@
+import ApiError from './ApiError';
+import ApiResponse from './ApiResponse';
 import globalErrorHandler from './globalErrorHandler';
 import notFound from './noFound';
 
-export { globalErrorHandler, notFound };
+export { ApiError, ApiResponse, globalErrorHandler, notFound };
