@@ -10,4 +10,5 @@ export const config = {
   access_token_expiry: process.env.ACCESS_TOKEN_EXPIRY,
   refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
   refresh_token_expiry: process.env.REFRESH_TOKEN_EXPIRY,
+  default_password: process.env.DEFAULT_PASSWORD,
 };
