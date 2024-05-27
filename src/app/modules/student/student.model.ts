@@ -118,10 +118,10 @@ const studentSchema = new Schema<IStudent>(
     },
     profileImg: {
       type: String,
-      required: true,
     },
     admissionSemester: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Semester',
       required: true,
     },
     guardian: {
