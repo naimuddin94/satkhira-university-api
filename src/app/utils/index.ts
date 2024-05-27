@@ -4,4 +4,10 @@ import asyncHandler from './asyncHandler';
 import globalErrorHandler from './globalErrorHandler';
 import notFound from './noFound';
 
-export { ApiError, ApiResponse, asyncHandler, globalErrorHandler, notFound };
+export {
+  ApiError,
+  ApiResponse,
+  asyncHandler,
+  globalErrorHandler,
+  notFound,
+};
