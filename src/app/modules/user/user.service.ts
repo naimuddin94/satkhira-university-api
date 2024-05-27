@@ -1,13 +1,8 @@
-import { IStudent } from '../student/student.interface';
 import { IUser } from './user.interface';
+import User from './user.model';
 
-interface IStudentData {
-  user: IUser;
-  student: IStudent;
-}
-
-const saveUserIntoDB = async (payload: IStudentData) => {
-  console.log(payload);
+const saveUserIntoDB = async (payload: IUser) => {
+  return await User.create(payload);
 };
 
 export const userService = {
