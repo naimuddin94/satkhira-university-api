@@ -6,7 +6,7 @@ import { IUser, IUserMethods, IUserModel } from './user.interface';
 const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
   {
     id: {
-      type: Number,
+      type: String,
       required: true,
     },
     email: {
