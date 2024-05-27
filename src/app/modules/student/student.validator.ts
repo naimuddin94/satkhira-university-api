@@ -1,5 +1,5 @@
+import { Types } from 'mongoose';
 import { z } from 'zod';
-import { userValidationSchema } from '../user/user.validator';
 
 export const nameValidationSchema = z.object({
   firstName: z
@@ -72,14 +72,18 @@ export const studentValidationSchema = z.object({
   }),
   guardian: guardianValidationSchema,
   localGuardian: localGuardianValidationSchema,
-  admissionSemester: z.string({
-    required_error: 'Admission semester is required',
-  }),
+  admissionSemester: z.preprocess((arg: unknown) => {
+    if (typeof arg === 'string') {
+      return new Types.ObjectId(arg);
+    }
+    return arg;
+  }, z.instanceof(Types.ObjectId)),
   profileImg: z.string().optional(),
   isDeleted: z.boolean().optional(),
 });
 
 export const createStudentValidationSchema = z.object({
-  user: userValidationSchema,
+  email: z.string(),
+  password: z.string().optional(),
   student: studentValidationSchema,
 });
