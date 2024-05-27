@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { userValidationSchema } from '../user/user.validator';
 
 export const nameValidationSchema = z.object({
   firstName: z
@@ -62,9 +63,13 @@ export const studentValidationSchema = z.object({
     return arg;
   }, z.date()),
   contactNo: z.string(),
-  emergencyContactNo: z.string(),
-  presentAddress: z.string(),
-  permanentAddress: z.string(),
+  emergencyContactNo: z.string({
+    required_error: 'Emergency contact is required',
+  }),
+  presentAddress: z.string({ required_error: 'Present address is required' }),
+  permanentAddress: z.string({
+    required_error: 'Permanent address is required',
+  }),
   guardian: guardianValidationSchema,
   localGuardian: localGuardianValidationSchema,
   admissionSemester: z.string({
@@ -72,4 +77,9 @@ export const studentValidationSchema = z.object({
   }),
   profileImg: z.string().optional(),
   isDeleted: z.boolean().optional(),
+});
+
+export const createStudentValidationSchema = z.object({
+  user: userValidationSchema,
+  student: studentValidationSchema,
 });
