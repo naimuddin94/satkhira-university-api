@@ -1,7 +1,6 @@
 import cors from 'cors';
 import express from 'express';
-import { semesterRouter } from './app/modules/semester/semester.route';
-import { userRouter } from './app/modules/user/user.route';
+import router from './app/routes';
 import { globalErrorHandler, notFound } from './app/utils';
 const app = express();
 
@@ -14,9 +13,7 @@ app.get('/', (req, res) => {
   res.send('Server is running 🎉');
 });
 
-// all routes
-app.use('/api/v1/users', userRouter);
-app.use('/api/v1/semesters', semesterRouter);
+app.use('/api/v1/', router);
 
 // not found route handling
 app.all('*', notFound);
