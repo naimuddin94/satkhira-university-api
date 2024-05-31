@@ -4,6 +4,7 @@ import {
   ILocalGuardian,
   IName,
   IStudent,
+  IStudentModel,
 } from './student.interface';
 
 const nameSchema = new Schema<IName>(
@@ -81,7 +82,7 @@ const localGuardianSchema = new Schema<ILocalGuardian>(
   },
 );
 
-const studentSchema = new Schema<IStudent>(
+const studentSchema = new Schema<IStudent, IStudentModel>(
   {
     name: {
       type: nameSchema,
@@ -140,6 +141,12 @@ const studentSchema = new Schema<IStudent>(
   { timestamps: true, versionKey: false },
 );
 
-const Student = model<IStudent>('Student', studentSchema);
+// Check that the student exists to database
+studentSchema.statics.isStudentExists = async function (id: string) {
+  const result = await Student.findOne({ id });
+  return result;
+};
+
+const Student = model<IStudent, IStudentModel>('Student', studentSchema);
 
 export default Student;
