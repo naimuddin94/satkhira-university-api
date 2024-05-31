@@ -12,8 +12,6 @@ const getStudentLastId = async (query: string) => {
   return result?.id ? result.id : 0;
 };
 
-// 2030 03 0002
-
 export const generateStudentId = async (semester: ISemester) => {
   let currentId = (1).toString().padStart(4, '0');
 
