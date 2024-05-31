@@ -66,9 +66,14 @@ const saveUserIntoDB = async (payload: IPayload) => {
     await session.endSession();
 
     return response;
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
+    throw new ApiError(
+      error.status || 500,
+      error.message || 'Something went wrong during creating a new student',
+    );
   }
 };
 
