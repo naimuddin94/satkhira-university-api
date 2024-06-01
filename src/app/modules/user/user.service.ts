@@ -70,10 +70,11 @@ const saveUserIntoDB = async (payload: IPayload) => {
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
-    throw new ApiError(
-      error.status || 500,
-      error.message || 'Something went wrong during creating a new student',
-    );
+    throw error;
+    // throw new ApiError(
+    //   error.status || 500,
+    //   error.message || 'Something went wrong during creating a new student',
+    // );
   }
 };
 
