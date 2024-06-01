@@ -87,3 +87,7 @@ export const createStudentValidationSchema = z.object({
   password: z.string().optional(),
   student: studentValidationSchema,
 });
+
+export const updateStudentValidationSchema = z.object({
+  student: studentValidationSchema.deepPartial(),
+});
