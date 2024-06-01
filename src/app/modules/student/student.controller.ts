@@ -3,6 +3,19 @@ import httpStatus from 'http-status';
 import { ApiResponse, asyncHandler } from '../../utils';
 import { studentService } from './student.service';
 
+const updateStudent = asyncHandler(async (req: Request, res: Response) => {
+  const studentData = req.body.student;
+  const { studentId } = req.params;
+  const result = await studentService.updateStudentIntoDB(
+    studentId,
+    studentData,
+  );
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, result, 'Student updated successfully'));
+});
+
 const deleteStudent = asyncHandler(async (req: Request, res: Response) => {
   const { studentId } = req.params;
   const result = await studentService.deleteStudentFromDB(studentId);
@@ -14,6 +27,16 @@ const deleteStudent = asyncHandler(async (req: Request, res: Response) => {
     );
 });
 
+const fetchAllStudents = asyncHandler(async (req: Request, res: Response) => {
+  const result = await studentService.fetchAllStudentFromDB();
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, result, 'Student retrieved successfully'));
+});
+
 export const studentController = {
+  updateStudent,
   deleteStudent,
+  fetchAllStudents,
 };
