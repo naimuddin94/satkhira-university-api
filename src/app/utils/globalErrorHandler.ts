@@ -6,10 +6,11 @@ import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { ZodError } from 'zod';
 import { handleCastError } from '../error/handleCastError';
+import { handleDuplicateError } from '../error/handleDuplicateError';
 import { handleMongooseError } from '../error/handleMongooseError';
 import { handleZodError } from '../error/handleZodError';
 import { IErrorSource } from '../types';
-import { handleDuplicateError } from '../error/handleDuplicateError';
+import ApiError from './ApiError';
 
 const globalErrorHandler = (
   err: any,
@@ -46,13 +47,29 @@ const globalErrorHandler = (
     statusCode = modifier.statusCode;
     message = modifier.message;
     errors = modifier.errors;
+  } else if (err instanceof ApiError) {
+    statusCode = err.status;
+    message = err.message;
+    errors = [
+      {
+        path: '',
+        message: err.message,
+      },
+    ];
+  } else if (err instanceof Error) {
+    message = err.message;
+    errors = [
+      {
+        path: '',
+        message: err.message,
+      },
+    ];
   }
 
-  return res.status(err.status || statusCode || 500).json({
+  return res.status(err.status || statusCode).json({
     success: false,
     message,
     errors,
-    err,
   });
 };
 
