@@ -85,18 +85,57 @@ const updateStudentIntoDB = async (id: string, payload: Partial<IStudent>) => {
 };
 
 const fetchAllStudentFromDB = async (query: Record<string, unknown>) => {
+  const queryObject = { ...query };
   let searchTerm = '';
   if (query?.searchTerm) {
     searchTerm = query.searchTerm as string;
   }
 
-  return await Student.find({
-    $or: ['name.firstName', 'email', 'lastName', 'presentAddress'].map(
-      (field) => {
-        return { [field]: { $regex: searchTerm, $options: 'i' } };
-      },
-    ),
+  const searchableFields = [
+    'name.firstName',
+    'email',
+    'lastName',
+    'presentAddress',
+  ];
+
+  const excludeFields = ['searchTerm', 'sort', 'page', 'limit'];
+
+  excludeFields.forEach((field) => delete queryObject[field]);
+
+  const searchQuery = Student.find({
+    $or: searchableFields.map((field) => {
+      return { [field]: { $regex: searchTerm, $options: 'i' } };
+    }),
   });
+
+  const filterQuery = searchQuery.find(queryObject).populate({
+    path: 'userId admissionSemester',
+    select: 'email role name year -_id',
+  });
+
+  let sort = '-createdAt';
+
+  if (query.sort) {
+    sort = query.sort as string;
+  }
+
+  const sortQuery = filterQuery.sort(sort);
+
+  let limit = 1;
+  let skip = 0;
+  const page = 1;
+
+  if (query?.limit) {
+    limit = Number(query.limit);
+  }
+
+  if (query?.page) {
+    skip = (Number(query.page) - 1) * limit;
+  }
+
+  const skipQuery = await sortQuery.skip(skip).limit(limit);
+
+  return skipQuery;
 };
 
 export const studentService = {
