@@ -84,8 +84,19 @@ const updateStudentIntoDB = async (id: string, payload: Partial<IStudent>) => {
   return result;
 };
 
-const fetchAllStudentFromDB = async () => {
-  return await Student.find();
+const fetchAllStudentFromDB = async (query: Record<string, unknown>) => {
+  let searchTerm = '';
+  if (query?.searchTerm) {
+    searchTerm = query.searchTerm as string;
+  }
+
+  return await Student.find({
+    $or: ['name.firstName', 'email', 'lastName', 'presentAddress'].map(
+      (field) => {
+        return { [field]: { $regex: searchTerm, $options: 'i' } };
+      },
+    ),
+  });
 };
 
 export const studentService = {
