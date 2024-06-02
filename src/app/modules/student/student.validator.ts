@@ -63,6 +63,14 @@ export const studentValidationSchema = z.object({
     return arg;
   }, z.date()),
   contactNo: z.string(),
+  userId: z
+    .preprocess((arg: unknown) => {
+      if (typeof arg === 'string') {
+        return new Types.ObjectId(arg);
+      }
+      return arg;
+    }, z.instanceof(Types.ObjectId))
+    .optional(),
   emergencyContactNo: z.string({
     required_error: 'Emergency contact is required',
   }),
