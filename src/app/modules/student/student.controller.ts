@@ -28,7 +28,8 @@ const deleteStudent = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const fetchAllStudents = asyncHandler(async (req: Request, res: Response) => {
-  const result = await studentService.fetchAllStudentFromDB();
+  const query = req.query;
+  const result = await studentService.fetchAllStudentFromDB(query);
 
   res
     .status(200)
