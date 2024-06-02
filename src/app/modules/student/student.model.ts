@@ -100,6 +100,10 @@ const studentSchema = new Schema<IStudent, IStudentModel>(
       type: String,
       required: true,
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
     gender: {
       type: String,
       enum: ['male', 'female'],
