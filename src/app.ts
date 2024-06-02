@@ -1,6 +1,6 @@
 import cors from 'cors';
 import express from 'express';
-import router from './app/routes';
+import router from './app/routes/routes';
 import { globalErrorHandler, notFound } from './app/utils';
 const app = express();
 
