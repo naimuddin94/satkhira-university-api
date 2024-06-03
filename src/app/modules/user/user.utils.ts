@@ -1,3 +1,4 @@
+import { Faculty } from '../faculty/faculty.model';
 import { ISemester } from '../semester/semester.interface';
 import Student from '../student/student.model';
 
@@ -35,3 +36,41 @@ export const generateStudentId = async (semester: ISemester) => {
 
   return `${currentStudentYear}${currentStudentSemesterCode}${currentId}`;
 };
+
+const getLastFacultyId = async () => {
+  const result = await Faculty.findOne({}, { _id: 0, id: 1 })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return result?.id ? result.id : '0000';
+};
+
+export const generateFacultyId = async () => {
+  // F-0001
+  const lastFacultyId = await getLastFacultyId();
+  const idNumber = Number(lastFacultyId.substring(2));
+  const increaseId = idNumber + 1;
+  const facultyId = increaseId.toString().padStart(4, '0');
+
+  return `F-${facultyId}`;
+};
+
+// const getLastAdminId = async () => {
+//   const result = await Admin.findOne({}, { _id: 0, id: 1 })
+//     .sort({ createdAt: -1 })
+//     .lean();
+
+//   return result?.id ? result.id : '0000';
+// };
+
+// export const generateAdminId = async () => {
+//   // F-0001
+//   const lastFacultyId = await getLastAdminId();
+//   const idNumber = Number(lastFacultyId.substring(2));
+//   const increaseId = idNumber + 1;
+//   const facultyId = increaseId.toString().padStart(4, '0');
+
+//   return `F-${facultyId}`;
+// };
+
+

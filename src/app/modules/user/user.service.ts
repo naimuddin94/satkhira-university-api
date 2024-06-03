@@ -1,19 +1,31 @@
+import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import { config } from '../../config';
 import { ApiError } from '../../utils';
+import AcademicDepartment from '../academicDepartment/academicDepartment.model';
+import { IFaculty } from '../faculty/faculty.interface';
+import { Faculty } from '../faculty/faculty.model';
 import Semester from '../semester/semester.model';
 import { IStudent } from '../student/student.interface';
 import Student from '../student/student.model';
+import { IUser } from './user.interface';
 import User from './user.model';
-import { generateStudentId } from './user.utils';
+import { generateFacultyId, generateStudentId } from './user.utils';
 
 interface IPayload {
   email: string;
   password: string | undefined;
+}
+
+interface IStudentPayload extends IPayload {
   student: IStudent;
 }
 
-const saveUserIntoDB = async (payload: IPayload) => {
+interface IFacultyPayload extends IPayload {
+  faculty: IFaculty;
+}
+
+const saveStudentIntoDB = async (payload: IStudentPayload) => {
   const { email, password, student } = payload;
   const semester = await Semester.findById(student.admissionSemester);
 
@@ -80,6 +92,57 @@ const saveUserIntoDB = async (payload: IPayload) => {
   }
 };
 
+const saveFacultyIntoDB = async (payload: IFacultyPayload) => {
+  const { email, password, faculty } = payload;
+
+  const userData: Partial<IUser> = {};
+
+  userData.email = email;
+  userData.role = 'faculty';
+  userData.password = password || config.default_password;
+
+  // find academic department info
+  const academicDepartment = await AcademicDepartment.findById(
+    faculty.academicDepartment,
+  );
+
+  if (!academicDepartment) {
+    throw new ApiError(400, 'Academic department not found');
+  }
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+    userData.id = await generateFacultyId();
+    const createdUser = await User.create([userData], { session });
+
+    if (!createdUser.length) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create user');
+    }
+
+    faculty.id = createdUser[0].id;
+    faculty.email = createdUser[0].email;
+    faculty.userId = createdUser[0]._id;
+
+    const createdFaculty = await Faculty.create([faculty], { session });
+
+    if (!createdFaculty.length) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create faculty');
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return createdFaculty;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw error;
+  }
+};
+
 export const userService = {
-  saveUserIntoDB,
+  saveStudentIntoDB,
+  saveFacultyIntoDB,
 };

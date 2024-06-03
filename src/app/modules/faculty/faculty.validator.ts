@@ -15,12 +15,14 @@ const facultyValidationSchema = z.object({
     return arg;
   }, z.date()),
   email: z.string().email({ message: 'Invalid email' }).optional(),
-  userId: z.preprocess((arg: unknown) => {
-    if (typeof arg === 'string') {
-      return new Types.ObjectId(arg);
-    }
-    return arg;
-  }, z.instanceof(Types.ObjectId)),
+  userId: z
+    .preprocess((arg: unknown) => {
+      if (typeof arg === 'string') {
+        return new Types.ObjectId(arg);
+      }
+      return arg;
+    }, z.instanceof(Types.ObjectId))
+    .optional(),
   contactNo: z
     .string({
       required_error: 'contactNo is required',
@@ -45,18 +47,22 @@ const facultyValidationSchema = z.object({
     required_error: 'designation is required',
   }),
   profileImage: z.string().url({ message: 'Invalid URL' }).optional(),
-  academicFaculty: z.preprocess((arg: unknown) => {
-    if (typeof arg === 'string') {
-      return new Types.ObjectId(arg);
-    }
-    return arg;
-  }, z.instanceof(Types.ObjectId)),
-  academicDepartment: z.preprocess((arg: unknown) => {
-    if (typeof arg === 'string') {
-      return new Types.ObjectId(arg);
-    }
-    return arg;
-  }, z.instanceof(Types.ObjectId)),
+  academicFaculty: z
+    .preprocess((arg: unknown) => {
+      if (typeof arg === 'string') {
+        return new Types.ObjectId(arg);
+      }
+      return arg;
+    }, z.instanceof(Types.ObjectId))
+    .optional(),
+  academicDepartment: z
+    .preprocess((arg: unknown) => {
+      if (typeof arg === 'string') {
+        return new Types.ObjectId(arg);
+      }
+      return arg;
+    }, z.instanceof(Types.ObjectId))
+    .optional(),
   isDeleted: z.boolean().default(false),
 });
 
