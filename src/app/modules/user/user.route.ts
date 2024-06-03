@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { validation } from '../../middleware/validation';
-import { facultyValidation } from '../faculty/faculty.validator';
+import { createAdminValidationSchema } from '../admin/admin.validator';
+import { createFacultyValidationSchema } from '../faculty/faculty.validator';
 import { createStudentValidationSchema } from '../student/student.validator';
 import { userController } from './user.controller';
 
@@ -16,8 +17,12 @@ router
 router
   .route('/create-faculty')
   .post(
-    validation(facultyValidation.createFacultyValidationSchema),
+    validation(createFacultyValidationSchema),
     userController.createFaculty,
   );
+
+router
+  .route('/create-admin')
+  .post(validation(createAdminValidationSchema), userController.createAdmin);
 
 export const userRouter = router;
