@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { z } from 'zod';
 import { nameValidationSchema } from '../student/student.validator';
 
-const facultyValidationSchema = z.object({
+export const facultyValidationSchema = z.object({
   id: z.string().optional(),
   name: nameValidationSchema,
   gender: z.enum(['male', 'female', 'other'], {
@@ -66,13 +66,10 @@ const facultyValidationSchema = z.object({
   isDeleted: z.boolean().default(false),
 });
 
-const createFacultyValidationSchema = z.object({
+export const createFacultyValidationSchema = z.object({
   email: z.string(),
   password: z.string().optional(),
   faculty: facultyValidationSchema,
 });
 
-export const facultyValidation = {
-  facultyValidationSchema,
-  createFacultyValidationSchema,
-};
+
