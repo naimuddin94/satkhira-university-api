@@ -7,7 +7,7 @@ import {
   IStudentModel,
 } from './student.interface';
 
-const nameSchema = new Schema<IName>(
+export const nameSchema = new Schema<IName>(
   {
     firstName: {
       type: String,
