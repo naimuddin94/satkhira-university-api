@@ -63,6 +63,7 @@ export const studentValidationSchema = z.object({
     return arg;
   }, z.date()),
   contactNo: z.string(),
+  email: z.string().email({ message: 'Invalid email' }).optional(),
   userId: z
     .preprocess((arg: unknown) => {
       if (typeof arg === 'string') {
