@@ -100,13 +100,18 @@ const studentSchema = new Schema<IStudent, IStudentModel>(
       type: String,
       required: true,
     },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
     gender: {
       type: String,
-      enum: ['male', 'female'],
+      enum: ['male', 'female', 'other'],
       required: true,
     },
     emergencyContactNo: {
@@ -142,8 +147,35 @@ const studentSchema = new Schema<IStudent, IStudentModel>(
       default: false,
     },
   },
-  { timestamps: true, versionKey: false },
+  {
+    timestamps: true,
+    versionKey: false,
+    toJSON: {
+      virtuals: true,
+    },
+  },
 );
+
+// generating full name
+studentSchema.virtual('fullName').get(function () {
+  return this?.name?.firstName + '' + this?.name?.lastName;
+});
+
+// filter out deleted documents
+studentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+studentSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+studentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 // Check that the student exists to database
 studentSchema.statics.isStudentExists = async function (id: string) {
