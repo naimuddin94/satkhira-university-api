@@ -18,7 +18,16 @@ const createFaculty = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(201, result, 'Faculty created successfully'));
 });
 
+const createAdmin = asyncHandler(async (req: Request, res: Response) => {
+  const result = await userService.saveAdminIntoDB(req.body);
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, result, 'Admin created successfully'));
+});
+
 export const userController = {
   createStudent,
   createFaculty,
+  createAdmin,
 };
