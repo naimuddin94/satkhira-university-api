@@ -92,7 +92,7 @@ const facultySchema = new Schema<IFaculty, IFacultyModel>(
 
 // generating full name
 facultySchema.virtual('fullName').get(function () {
-  return this?.name?.firstName + '' + this?.name?.lastName;
+  return this?.name?.firstName + ' ' + this?.name?.lastName;
 });
 
 // filter out deleted documents
