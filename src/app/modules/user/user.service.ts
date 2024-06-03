@@ -44,6 +44,7 @@ const saveUserIntoDB = async (payload: IPayload) => {
 
     student.id = createdUser[0].id;
     student.userId = createdUser[0]._id;
+    student.email = createdUser[0].email;
 
     const createdStudent = await Student.create([student], { session });
 
