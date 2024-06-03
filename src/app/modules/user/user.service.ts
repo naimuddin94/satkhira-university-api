@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import { config } from '../../config';
 import { ApiError } from '../../utils';
 import AcademicDepartment from '../academicDepartment/academicDepartment.model';
+import { IAdmin } from '../admin/admin.interface';
+import { Admin } from '../admin/admin.model';
 import { IFaculty } from '../faculty/faculty.interface';
 import { Faculty } from '../faculty/faculty.model';
 import Semester from '../semester/semester.model';
@@ -10,7 +12,11 @@ import { IStudent } from '../student/student.interface';
 import Student from '../student/student.model';
 import { IUser } from './user.interface';
 import User from './user.model';
-import { generateFacultyId, generateStudentId } from './user.utils';
+import {
+  generateAdminId,
+  generateFacultyId,
+  generateStudentId,
+} from './user.utils';
 
 interface IPayload {
   email: string;
@@ -23,6 +29,10 @@ interface IStudentPayload extends IPayload {
 
 interface IFacultyPayload extends IPayload {
   faculty: IFaculty;
+}
+
+interface IAdminPayload extends IPayload {
+  admin: IAdmin;
 }
 
 const saveStudentIntoDB = async (payload: IStudentPayload) => {
@@ -42,7 +52,7 @@ const saveStudentIntoDB = async (payload: IStudentPayload) => {
     const user = {
       id: studentId,
       email,
-      password: password || (config.default_password as string),
+      password: password || config.default_password,
       role: 'student',
     };
     const createdUser = await User.create([user], { session });
@@ -142,7 +152,49 @@ const saveFacultyIntoDB = async (payload: IFacultyPayload) => {
   }
 };
 
+const saveAdminIntoDB = async (payload: IAdminPayload) => {
+  const { email, password, admin } = payload;
+  const userData: Partial<IUser> = {};
+  userData.email = email;
+  userData.password = password || config.default_password;
+  userData.role = 'admin';
+
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    const adminId = await generateAdminId();
+    userData.id = adminId;
+
+    const createdUser = await User.create([userData], { session });
+
+    if (!createdUser.length) {
+      throw new ApiError(500, 'User creation failed');
+    }
+
+    admin.id = createdUser[0].id;
+    admin.userId = createdUser[0]._id;
+    admin.email = createdUser[0].email;
+
+    const createdAdmin = await Admin.create([admin], { session });
+
+    if (!createdAdmin.length) {
+      throw new ApiError(500, 'Admin creation failed');
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return createdAdmin;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw error;
+  }
+};
+
 export const userService = {
   saveStudentIntoDB,
   saveFacultyIntoDB,
+  saveAdminIntoDB,
 };
