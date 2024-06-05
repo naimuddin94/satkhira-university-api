@@ -1,18 +1,26 @@
-import { ApiError } from '../../utils';
-import { IFaculty } from './faculty.interface';
+import QueryBuilder from '../../builder/QueryBuilder';
 import { Faculty } from './faculty.model';
 
-const saveFacultyIntoDB = async (payload: IFaculty) => {
-  const isExistsFaculty = await Faculty.isFacultyExists(payload.id as string);
+const fetchAllFaculty = async (query: Record<string, string>) => {
+  const searchableFields = [
+    'name.firstName',
+    'firstName.lastName',
+    'email',
+    'permanentAddress',
+    'presentAddress',
+  ];
+  const searchedData = new QueryBuilder(Faculty.find(), query)
+    .search(searchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
-  if (isExistsFaculty) {
-    throw new ApiError(400, 'Faculty already exists');
-  }
+  const result = await searchedData.queryModel;
 
-  const result = await Faculty.create(payload);
   return result;
 };
 
 export const facultyService = {
-  saveFacultyIntoDB,
+  fetchAllFaculty,
 };
