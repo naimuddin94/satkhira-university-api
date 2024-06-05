@@ -54,7 +54,6 @@ class QueryBuilder<T> {
   fields() {
     const fields = (this?.query?.fields as string)?.split(',')?.join(' ');
 
-    console.log('from 58', fields);
     this.queryModel = this.queryModel.select(fields);
     return this;
   }
