@@ -87,6 +87,7 @@ const updateStudentIntoDB = async (id: string, payload: Partial<IStudent>) => {
 };
 
 const fetchAllStudentFromDB = async (query: Record<string, unknown>) => {
+  console.log(query);
   // const queryObject = { ...query };
   // let searchTerm = '';
   // if (query?.searchTerm) {
