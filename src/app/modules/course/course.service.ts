@@ -1,9 +1,9 @@
+import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { ApiError } from '../../utils';
 import { ICourse } from './course.interface';
 import { Course } from './course.model';
-import { ApiError } from '../../utils';
-import httpStatus from 'http-status';
 
 const createCourseIntoDB = async (payload: ICourse) => {
   const result = await Course.create(payload);
@@ -13,8 +13,12 @@ const createCourseIntoDB = async (payload: ICourse) => {
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
   const CourseSearchableFields = ['title', 'prefix', 'code'];
   const courseQuery = new QueryBuilder(
-    Course.find(),
-    // .populate('preRequisiteCourses.course'),
+    Course.find()
+      .populate({
+        path: 'preRequisiteCourses.course',
+        select: 'title prefix code',
+      })
+      .select('-isDeleted'),
     query,
   )
     .search(CourseSearchableFields)
@@ -41,7 +45,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<ICourse>) => {
 
   try {
     session.startTransaction();
-    //step1: basic course info update
+    // step1: basic course info update
     const updatedBasicCourseInfo = await Course.findByIdAndUpdate(
       id,
       courseRemainingData,
