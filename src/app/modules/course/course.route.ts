@@ -1,7 +1,10 @@
 import express from 'express';
 import { validation } from '../../middleware/validation';
 import { CourseControllers } from './course.controller';
-import { courseValidationSchema } from './course.validator';
+import {
+  courseValidationSchema,
+  updateCourseValidationSchema,
+} from './course.validator';
 
 const router = express.Router();
 
@@ -13,6 +16,10 @@ router
 router
   .route('/:id')
   .get(CourseControllers.getSingleCourse)
+  .patch(
+    validation(updateCourseValidationSchema),
+    CourseControllers.updateCourse,
+  )
   .delete(CourseControllers.deleteCourse);
 
-export const CourseRoutes = router;
+export const courseRouter = router;
