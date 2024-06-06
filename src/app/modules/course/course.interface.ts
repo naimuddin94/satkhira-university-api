@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { courseValidationSchema, preRequisiteCourseValidationSchema } from "./course.validator";
+import { courseValidationSchema, createCourseFacultySchema, preRequisiteCourseValidationSchema } from "./course.validator";
 import { Model } from "mongoose";
 
 export interface IPreRequisiteCourse
@@ -7,4 +7,6 @@ export interface IPreRequisiteCourse
 
 export interface ICourse extends z.infer<typeof courseValidationSchema>{ }
 
-export interface ICourseModel extends Model<ICourse>{}
+export interface ICourseModel extends Model<ICourse>{ }
+
+export interface ICourseFaculty extends z.infer<typeof createCourseFacultySchema>{}
