@@ -33,14 +33,6 @@ export const facultiesWithCourseValidationSchema = z.object({
 });
 
 export const createCourseFacultySchema = z.object({
-  course: z
-    .preprocess((arg: unknown) => {
-      if (typeof arg === 'string') {
-        return new Types.ObjectId(arg);
-      }
-      return arg;
-    }, z.instanceof(Types.ObjectId))
-    .optional(),
   faculties: z.array(
     z.preprocess((arg: unknown) => {
       if (typeof arg === 'string') {
