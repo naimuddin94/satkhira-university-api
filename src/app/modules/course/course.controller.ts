@@ -44,10 +44,40 @@ const deleteCourse = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, result, 'Course deleted successfully'));
 });
 
+const assignFacultiesWithCourse = asyncHandler(async (req, res) => {
+  const { courseId } = req.params;
+  const { faculties } = req.body;
+
+  const result = await CourseServices.assignFacultiesWithCourseIntoDB(
+    courseId,
+    faculties,
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, 'Faculties assign successfully'));
+});
+
+const removeFacultiesInCourse = asyncHandler(async (req, res) => {
+  const { courseId } = req.params;
+  const { faculties } = req.body;
+
+  const result = await CourseServices.removeFacultiesFromCourseIntoDB(
+    courseId,
+    faculties,
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, 'Faculties remove successfully'));
+});
+
 export const CourseControllers = {
   createCourse,
   getSingleCourse,
   getAllCourses,
   updateCourse,
   deleteCourse,
+  assignFacultiesWithCourse,
+  removeFacultiesInCourse,
 };
