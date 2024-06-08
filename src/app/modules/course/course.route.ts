@@ -3,6 +3,7 @@ import { validation } from '../../middleware/validation';
 import { CourseControllers } from './course.controller';
 import {
   courseValidationSchema,
+  createCourseFacultySchema,
   updateCourseValidationSchema,
 } from './course.validator';
 
@@ -21,5 +22,19 @@ router
     CourseControllers.updateCourse,
   )
   .delete(CourseControllers.deleteCourse);
+
+router
+  .route('/:courseId/assign-faculties')
+  .put(
+    validation(createCourseFacultySchema),
+    CourseControllers.assignFacultiesWithCourse,
+  );
+
+router
+  .route('/:courseId/remove-faculties')
+  .delete(
+    validation(createCourseFacultySchema),
+    CourseControllers.removeFacultiesInCourse,
+  );
 
 export const courseRouter = router;
