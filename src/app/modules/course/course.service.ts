@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { ApiError } from '../../utils';
 import { ICourse } from './course.interface';
-import { Course } from './course.model';
+import { Course, CourseFaculty } from './course.model';
 
 const createCourseIntoDB = async (payload: ICourse) => {
   const result = await Course.create(payload);
@@ -133,10 +133,49 @@ const deleteCourseFromDB = async (id: string) => {
   return result;
 };
 
+const assignFacultiesWithCourseIntoDB = async (
+  id: string,
+  facultiesIds: string[],
+) => {
+  const result = await CourseFaculty.findByIdAndUpdate(
+    id,
+    {
+      course: id,
+      $addToSet: { faculties: { $each: facultiesIds } },
+    },
+    {
+      upsert: true,
+      new: true,
+    },
+  );
+
+  return result;
+};
+
+const removeFacultiesFromCourseIntoDB = async (
+  id: string,
+  facultiesIds: string[],
+) => {
+  const result = await CourseFaculty.findByIdAndUpdate(
+    id,
+    {
+      $pull: { faculties: { $in: facultiesIds } },
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  return result;
+};
+
 export const CourseServices = {
   createCourseIntoDB,
   getAllCoursesFromDB,
   getSingleCourseFromDB,
   updateCourseIntoDB,
   deleteCourseFromDB,
+  assignFacultiesWithCourseIntoDB,
+  removeFacultiesFromCourseIntoDB,
 };
