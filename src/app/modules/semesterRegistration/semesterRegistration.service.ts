@@ -10,7 +10,6 @@ import SemesterRegistration from './semesterRegistration.model';
 const createSemesterRegistrationIntoDB = async (
   payload: ISemesterRegistration,
 ) => {
-
   const academicSemesterId = payload?.academicSemester;
 
   const academicSemester = await Semester.findById(academicSemesterId);
@@ -84,6 +83,42 @@ const updateSemesterRegistrationIntoDB = async (
   //if the requested semester registration is ended , we will not update anything
   const currentSemesterStatus = isSemesterRegistrationExists?.status;
   const requestedStatus = payload?.status;
+
+  console.log({ currentSemesterStatus, requestedStatus });
+
+  if (currentSemesterStatus === RegistrationStatus.ENDED) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'This semester registration is already ended',
+    );
+  }
+
+  if (
+    currentSemesterStatus === RegistrationStatus.UPCOMING &&
+    requestedStatus === RegistrationStatus.ENDED
+  ) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'You cannot change status UPCOMING to ENDED at a time',
+    );
+  }
+
+  if (
+    currentSemesterStatus === RegistrationStatus.ONGOING &&
+    requestedStatus === RegistrationStatus.UPCOMING
+  ) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'You cannot change status ONGOING to UPCOMING',
+    );
+  }
+
+  const result = await SemesterRegistration.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  return result;
 };
 
 const deleteSemesterRegistrationFromDB = async (id: string) => {};
