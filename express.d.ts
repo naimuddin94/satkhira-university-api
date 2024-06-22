@@ -4,6 +4,6 @@ import { IUser, IUserMethods } from './src/app/modules/user/user.interface';
 
 declare module 'express-serve-static-core' {
   interface Request {
-    user?: HydratedDocument<IUser, IUserMethods>;
+    user: HydratedDocument<IUser, IUserMethods>;
   }
 }
