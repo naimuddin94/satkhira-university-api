@@ -35,6 +35,7 @@ interface IAdminPayload extends IPayload {
   admin: IAdmin;
 }
 
+// Create new student into database
 const saveStudentIntoDB = async (payload: IStudentPayload) => {
   const { email, password, student } = payload;
   const semester = await Semester.findById(student.admissionSemester);
@@ -102,6 +103,7 @@ const saveStudentIntoDB = async (payload: IStudentPayload) => {
   }
 };
 
+// Create new faculty into database
 const saveFacultyIntoDB = async (payload: IFacultyPayload) => {
   const { email, password, faculty } = payload;
 
@@ -152,6 +154,7 @@ const saveFacultyIntoDB = async (payload: IFacultyPayload) => {
   }
 };
 
+// Create new admin into database
 const saveAdminIntoDB = async (payload: IAdminPayload) => {
   const { email, password, admin } = payload;
   const userData: Partial<IUser> = {};
