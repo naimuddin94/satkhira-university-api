@@ -3,6 +3,7 @@ import { Faculty } from '../faculty/faculty.model';
 import { ISemester } from '../semester/semester.interface';
 import Student from '../student/student.model';
 
+// Generate unique student id
 const getStudentLastId = async (query: string) => {
   const result = await Student.findOne(
     { id: { $regex: query } },
@@ -38,6 +39,8 @@ export const generateStudentId = async (semester: ISemester) => {
   return `${currentStudentYear}${currentStudentSemesterCode}${currentId}`;
 };
 
+
+// Generate unique faculty id
 const getLastFacultyId = async () => {
   const result = await Faculty.findOne({}, { _id: 0, id: 1 })
     .sort({ createdAt: -1 })
@@ -56,6 +59,8 @@ export const generateFacultyId = async () => {
   return `F-${facultyId}`;
 };
 
+
+// Generate unique admin id
 const getLastAdminId = async () => {
   const result = await Admin.findOne({}, { _id: 0, id: 1 })
     .sort({ createdAt: -1 })
