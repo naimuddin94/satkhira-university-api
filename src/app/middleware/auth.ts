@@ -23,7 +23,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     const { role, userId, iat } = decoded;
 
     // checking if the user is exist
-    const user = await User.isUserExistsByCustomId(userId);
+    const user = await User.(userId);
 
     if (!user) {
       throw new ApiError(httpStatus.NOT_FOUND, 'This user is not found !');
