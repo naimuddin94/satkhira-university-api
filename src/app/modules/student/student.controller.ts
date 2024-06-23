@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 import { ApiResponse, asyncHandler } from '../../utils';
 import { studentService } from './student.service';
 
+// Update student data controller
 const updateStudent = asyncHandler(async (req: Request, res: Response) => {
   const studentData = req.body.student;
   const { studentId } = req.params;
